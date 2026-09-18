@@ -1,20 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;700;900&family=Pacifico&family=Playfair+Display:ital,wght@0,700;1,700;1,900&display=swap');
 
 /* ============================================================
    TOKENS
    ============================================================ */
 :root {
   --cream: #F4E7E1;
-  --pink: #E060A0;
-  --pink-soft: #E0C0C0;
-  --red: #402020;
+  --pink: #F43F8C;
+  --pink-soft: #FFC1DA;
+  --red: #C91535;
   --ink: #17141A;
   --gold: #E0E0C0;
   --blue: #80A0C0;
   --lavender: #C0A0C0;
   --white: #FFFFFF;
 
-  --font-display: 'Bebas Neue', sans-serif;
+  --font-display: 'Pacifico', cursive;
   --font-hand: 'Caveat', cursive;
   --font-body: 'DM Sans', sans-serif;
 
@@ -59,9 +59,9 @@ p { margin: 0 0 1em; }
    reproduction of any specific print)
    ============================================================ */
 .cheetah-strip {
-  height: 14px;
+  height: 18px;
   width: 100%;
-  background-color: var(--gold);
+  background-color: var(--red);
   background-image:
     radial-gradient(circle at 10% 40%, var(--ink) 3px, transparent 4px),
     radial-gradient(circle at 25% 65%, var(--ink) 4px, transparent 5px),
@@ -196,7 +196,7 @@ p { margin: 0 0 1em; }
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(105deg, rgba(128, 160, 192, 0.88), rgba(192, 160, 192, 0.86)),
+    linear-gradient(105deg, rgba(244, 63, 140, 0.88), rgba(201, 21, 53, 0.9)),
     url("../assets/reference-01.jpeg") center 42% / cover;
   color: var(--white);
   border-bottom: 6px solid var(--ink);
@@ -240,7 +240,7 @@ p { margin: 0 0 1em; }
 .hero h1 {
   font-size: clamp(2.6rem, 6vw, 4.6rem);
   max-width: 14ch;
-  text-shadow: 4px 4px 0 var(--pink);
+  text-shadow: 4px 4px 0 var(--red);
 }
 .hero-sub {
   font-size: 1.15rem;
@@ -259,6 +259,13 @@ p { margin: 0 0 1em; }
   position: absolute;
   color: var(--pink);
   opacity: 0.9;
+}
+
+.star-decor::after {
+  content: "✦  ✧  ★  ✦";
+  color: var(--red);
+  font-size: 2rem;
+  letter-spacing: 0.35em;
 }
 
 /* ============================================================
@@ -299,15 +306,25 @@ section { padding: 56px 0; }
 .post-card h3 { color: var(--red); }
 
 .inspo-gallery {
-  background: var(--ink);
+  position: relative;
+  background: var(--red);
   color: var(--cream);
   overflow: hidden;
 }
 .inspo-gallery .section-title { color: var(--cream); }
 .inspo-gallery .section-sub { color: var(--pink); }
+.inspo-gallery::before,
+.inspo-gallery::after {
+  position: absolute;
+  color: var(--pink-soft);
+  font-size: 4rem;
+  content: "✦";
+}
+.inspo-gallery::before { top: 18px; left: 4%; }
+.inspo-gallery::after { right: 5%; bottom: 18px; content: "★"; }
 .inspo-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(130px, 1fr));
+  grid-template-columns: repeat(6, minmax(110px, 1fr));
   gap: 14px;
   align-items: end;
 }
@@ -321,6 +338,10 @@ section { padding: 56px 0; }
 .inspo-grid figure:nth-child(even) {
   transform: rotate(3deg) translateY(18px);
   background: var(--pink-soft);
+}
+.inspo-grid figure:nth-child(3n) {
+  transform: rotate(-5deg) translateY(-12px);
+  background: var(--gold);
 }
 .inspo-grid img {
   width: 100%;
