@@ -5,7 +5,7 @@
 
 const SITE_CONFIG = {
   // TODO: swap in your final site name once you've decided
-  name: "Cheetah Print Diaries",
+  name: "Shameless",
   tagline: "food, money, travel, and things we can't stand.",
 
   // Shared password for the admin/approval view (index.html -> admin.html)

@@ -1,4 +1,4 @@
-# Cheetah Print Diaries (placeholder name — see below)
+# Shameless
 
 A pink/red/cheetah-print blog with five themed sections, a weekly movie
 roundup with star ratings, and a reader-story submission system that you
@@ -118,8 +118,7 @@ devices.
 
 ## What's still a placeholder
 
-- The site name ("Cheetah Print Diaries") — you're still deciding on
-  this, swap it in `js/config.js` once you land on one.
+- The site name is configured in `js/config.js`.
 - All blog posts, movie roundups, and social links — replace with your
   real content via the admin view or by editing `js/storage.js` /
   `js/config.js` directly.
