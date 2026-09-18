@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+<div class="cheetah-strip"></div>
+
+<section>
+  <div class="wrap" style="max-width: 720px;">
+
+    <div id="login-view">
+      <h1 style="font-size: 2rem;">Admin login</h1>
+      <p class="small-note" style="margin-bottom: 20px;">Just for the two of us. Enter the shared password to approve stories and manage posts.</p>
+      <div class="card-panel">
+        <form id="login-form">
+          <div class="form-field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required autofocus>
+          </div>
+          <p id="login-error" class="small-note" style="display:none; color: var(--red); font-weight:700;">Wrong password, try again.</p>
+          <button type="submit" class="btn">Log in</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="admin-view" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 20px;">
+        <h1 style="font-size: 2rem; margin: 0;">Admin</h1>
+        <button class="btn btn-secondary" id="logout-btn">Log out</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="approve">Approve stories <span id="pending-count"></span></button>
+        <button class="tab-btn" data-tab="posts">Manage posts</button>
+        <button class="tab-btn" data-tab="movies">Manage movie roundups</button>
+      </div>
+
+      <!-- APPROVE STORIES -->
+      <div class="tab-panel active" id="tab-approve">
+        <div id="pending-list"></div>
+      </div>
+
+      <!-- MANAGE POSTS -->
+      <div class="tab-panel" id="tab-posts">
+        <div class="card-panel" style="margin-bottom: 28px;">
+          <h3 class="mt-0">Add a post</h3>
+          <form id="post-form">
+            <div class="form-field">
+              <label for="post-category">Page</label>
+              <select id="post-category">
+                <option value="pans">OnlyPans</option>
+                <option value="scams">OnlyScams</option>
+                <option value="plans">OnlyPlans</option>
+                <option value="bans">OnlyBans</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="post-title">Title</label>
+              <input type="text" id="post-title" required>
+            </div>
+            <div class="form-field">
+              <label for="post-body">Body</label>
+              <textarea id="post-body" required></textarea>
+            </div>
+            <div class="form-field">
+              <label for="post-image">Image (optional)</label>
+              <input type="file" id="post-image" accept="image/*">
+              <p class="form-note" style="margin-top:8px;">Images are stored right in this browser's local storage, so keep them small — large or many images can hit the storage limit.</p>
+            </div>
+            <button type="submit" class="btn">Add post</button>
+          </form>
+        </div>
+        <div id="posts-manage-list"></div>
+      </div>
+
+      <!-- MANAGE MOVIES -->
+      <div class="tab-panel" id="tab-movies">
+        <div class="card-panel" style="margin-bottom: 28px;">
+          <h3 class="mt-0">Add this week's roundup</h3>
+          <form id="movie-form">
+            <div class="form-field">
+              <label for="movie-title">Roundup title</label>
+              <input type="text" id="movie-title" value="This week's roundup" required>
+            </div>
+            <div class="form-field">
+              <label for="movie-body">Intro</label>
+              <textarea id="movie-body" placeholder="A line or two about this week's watching..."></textarea>
+            </div>
+            <div id="movie-items"></div>
+            <button type="button" class="btn btn-secondary" id="add-movie-item" style="margin-bottom: 18px;">+ Add title</button>
+            <br>
+            <button type="submit" class="btn">Publish roundup</button>
+          </form>
+        </div>
+        <div id="movies-manage-list"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/main.js"></script>
+<script>
+  /* ---------------- Login ---------------- */
+
+  function showAdmin() {
+    document.getElementById("login-view").style.display = "none";
+    document.getElementById("admin-view").style.display = "block";
+    renderPending();
+    renderPostsManageList();
+    renderMoviesManageList();
+  }
+
+  document.getElementById("login-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const pw = document.getElementById("login-password").value;
+    if (loginAdmin(pw)) {
+      showAdmin();
+    } else {
+      document.getElementById("login-error").style.display = "block";
+    }
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    logoutAdmin();
+    location.reload();
+  });
+
+  /* ---------------- Tabs ---------------- */
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  /* ---------------- Approve stories ---------------- */
+
+  function categoryLabel(key) {
+    const c = SITE_CONFIG.categories.find((c) => c.key === key);
+    return c ? c.label : key;
+  }
+
+  function renderPending() {
+    const pending = getPendingStories();
+    document.getElementById("pending-count").textContent = pending.length ? `(${pending.length})` : "";
+    const el = document.getElementById("pending-list");
+
+    if (pending.length === 0) {
+      el.innerHTML = `<div class="empty-state">No stories waiting for review.</div>`;
+      return;
+    }
+
+    el.innerHTML = pending
+      .map(
+        (s) => `
+      <div class="admin-list-item">
+        <div class="admin-list-item-head">
+          <span class="tag-pill">${categoryLabel(s.category)}</span>
+          <span class="small-note">${formatDate(s.date)}</span>
+        </div>
+        <p style="margin-bottom: 4px;">"${escapeHTML(s.text)}"</p>
+        <p class="small-note" style="margin: 0;">— ${escapeHTML(s.name)}</p>
+        <div class="admin-actions">
+          <button class="btn" data-approve="${s.id}">Approve</button>
+          <button class="btn btn-red" data-reject="${s.id}">Reject</button>
+        </div>
+      </div>
+    `
+      )
+      .join("");
+
+    el.querySelectorAll("[data-approve]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        setStoryStatus(btn.dataset.approve, "approved");
+        renderPending();
+      })
+    );
+    el.querySelectorAll("[data-reject]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        setStoryStatus(btn.dataset.reject, "rejected");
+        renderPending();
+      })
+    );
+  }
+
+  /* ---------------- Manage posts ---------------- */
+
+  document.getElementById("post-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const category = document.getElementById("post-category").value;
+    const title = document.getElementById("post-title").value;
+    const body = document.getElementById("post-body").value;
+    const fileInput = document.getElementById("post-image");
+
+    let image = "";
+    if (fileInput.files && fileInput.files[0]) {
+      try {
+        image = await fileToDataURL(fileInput.files[0]);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    addPost({ category, title, body, image });
+    e.target.reset();
+    renderPostsManageList();
+  });
+
+  function renderPostsManageList() {
+    const el = document.getElementById("posts-manage-list");
+    const posts = getAllPosts().sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (posts.length === 0) {
+      el.innerHTML = `<div class="empty-state">No posts yet.</div>`;
+      return;
+    }
+
+    el.innerHTML = posts
+      .map(
+        (p) => `
+      <div class="admin-list-item">
+        <div class="admin-list-item-head">
+          <span class="tag-pill">${categoryLabel(p.category)}</span>
+          <span class="small-note">${formatDate(p.date)}</span>
+        </div>
+        <h4 style="margin: 4px 0;">${escapeHTML(p.title)}</h4>
+        <p class="small-note" style="margin:0;">${escapeHTML(p.body).slice(0, 120)}${p.body.length > 120 ? "..." : ""}</p>
+        <div class="admin-actions">
+          <button class="btn btn-red" data-delete-post="${p.id}">Delete</button>
+        </div>
+      </div>
+    `
+      )
+      .join("");
+
+    el.querySelectorAll("[data-delete-post]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        if (confirm("Delete this post?")) {
+          deletePost(btn.dataset.deletePost);
+          renderPostsManageList();
+        }
+      })
+    );
+  }
+
+  /* ---------------- Manage movie roundups ---------------- */
+
+  function addMovieItemRow(name = "", stars = 5, note = "") {
+    const wrap = document.getElementById("movie-items");
+    const row = document.createElement("div");
+    row.className = "form-field";
+    row.style.border = "2px dashed #ccc";
+    row.style.borderRadius = "10px";
+    row.style.padding = "14px";
+    row.innerHTML = `
+      <label>Title</label>
+      <input type="text" class="mi-name" value="${escapeHTML(name)}" placeholder="e.g. The Grand Budapest Hotel">
+      <label style="margin-top:10px;">Rating (1-5)</label>
+      <input type="text" class="mi-stars" value="${stars}" style="max-width:80px;">
+      <label style="margin-top:10px;">Commentary</label>
+      <textarea class="mi-note" style="min-height:70px;">${escapeHTML(note)}</textarea>
+      <button type="button" class="btn btn-secondary" style="margin-top:10px;" data-remove-row>Remove</button>
+    `;
+    row.querySelector("[data-remove-row]").addEventListener("click", () => row.remove());
+    wrap.appendChild(row);
+  }
+
+  document.getElementById("add-movie-item").addEventListener("click", () => addMovieItemRow());
+
+  document.getElementById("movie-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("movie-title").value;
+    const body = document.getElementById("movie-body").value;
+    const items = Array.from(document.querySelectorAll("#movie-items .form-field")).map((row) => ({
+      name: row.querySelector(".mi-name").value,
+      stars: Math.max(1, Math.min(5, parseInt(row.querySelector(".mi-stars").value, 10) || 1)),
+      note: row.querySelector(".mi-note").value,
+    })).filter(item => item.name.trim());
+
+    addMoviePost({ title, body, items });
+    e.target.reset();
+    document.getElementById("movie-items").innerHTML = "";
+    addMovieItemRow();
+    renderMoviesManageList();
+  });
+
+  function renderMoviesManageList() {
+    const el = document.getElementById("movies-manage-list");
+    const posts = getMoviePosts();
+
+    if (posts.length === 0) {
+      el.innerHTML = `<div class="empty-state">No roundups yet.</div>`;
+      return;
+    }
+
+    el.innerHTML = posts
+      .map(
+        (p) => `
+      <div class="admin-list-item">
+        <div class="admin-list-item-head">
+          <h4 style="margin:0;">${escapeHTML(p.title)}</h4>
+          <span class="small-note">${formatDate(p.date)}</span>
+        </div>
+        <p class="small-note">${(p.items || []).length} titles rated</p>
+        <div class="admin-actions">
+          <button class="btn btn-red" data-delete-movie="${p.id}">Delete</button>
+        </div>
+      </div>
+    `
+      )
+      .join("");
+
+    el.querySelectorAll("[data-delete-movie]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        if (confirm("Delete this roundup?")) {
+          deleteMoviePost(btn.dataset.deleteMovie);
+          renderMoviesManageList();
+        }
+      })
+    );
+  }
+
+  /* ---------------- Init ---------------- */
+
+  document.addEventListener("DOMContentLoaded", () => {
+    addMovieItemRow();
+    if (isAdminLoggedIn()) showAdmin();
+  });
+</script>
+</body>
+</html>

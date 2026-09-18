@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Stories</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+<div class="cheetah-strip"></div>
+
+<header class="hero" style="padding-bottom: 24px;">
+  <div class="wrap">
+    <span class="hero-eyebrow">tell us everything</span>
+    <h1>Your Stories</h1>
+    <p class="hero-sub">Food regrets, money mistakes, travel disasters, things that made you scream into a pillow — send it in. We read every single submission and post our favorites once we've approved them.</p>
+  </div>
+</header>
+
+<section style="padding-top: 0;">
+  <div class="wrap" style="max-width: 640px;">
+    <div class="card-panel">
+      <h2 class="mt-0" style="font-size: 1.5rem;">Submit your story</h2>
+      <form id="story-form">
+        <div class="form-field">
+          <label for="story-category">What's this about?</label>
+          <select id="story-category" required></select>
+        </div>
+        <div class="form-field">
+          <label for="story-text">Your story</label>
+          <textarea id="story-text" required placeholder="Spill it..."></textarea>
+        </div>
+        <div class="form-field">
+          <label for="story-name">Name (optional)</label>
+          <input type="text" id="story-name" placeholder="Leave blank to post as Anonymous">
+        </div>
+        <p class="form-note">Submissions are reviewed by us before anything goes live — this won't appear publicly right away.</p>
+        <button type="submit" class="btn">Submit story</button>
+        <p id="story-confirm" class="small-note" style="display:none; margin-top: 14px; font-weight: 700; color: var(--red);">Got it! Your story is in for review.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="cheetah-strip"></div>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">Approved stories</h2>
+    <p class="section-sub">the ones that made the cut</p>
+    <div class="filter-row" id="story-filters"></div>
+    <div class="story-grid" id="story-grid"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let activeFilter = "all";
+
+  function populateCategorySelect() {
+    const select = document.getElementById("story-category");
+    select.innerHTML = SITE_CONFIG.categories
+      .map((c) => `<option value="${c.key}">${c.label}</option>`)
+      .join("");
+  }
+
+  function renderFilters() {
+    const el = document.getElementById("story-filters");
+    const chips = [{ key: "all", label: "All" }, ...SITE_CONFIG.categories];
+    el.innerHTML = chips
+      .map(
+        (c) =>
+          `<button class="filter-chip ${c.key === activeFilter ? "active" : ""}" data-key="${c.key}">${c.label}</button>`
+      )
+      .join("");
+    el.querySelectorAll(".filter-chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeFilter = btn.dataset.key;
+        renderFilters();
+        renderStories();
+      });
+    });
+  }
+
+  function categoryLabel(key) {
+    const c = SITE_CONFIG.categories.find((c) => c.key === key);
+    return c ? c.label : key;
+  }
+
+  function renderStories() {
+    const el = document.getElementById("story-grid");
+    const stories = getApprovedStories(activeFilter);
+
+    if (stories.length === 0) {
+      el.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">No approved stories here yet. Be the first to send one in!</div>`;
+      return;
+    }
+
+    el.innerHTML = stories
+      .map(
+        (s) => `
+      <div class="story-card">
+        <span class="story-card-tag">${categoryLabel(s.category)}</span>
+        <div class="story-card-text">"${escapeHTML(s.text)}"</div>
+        <div class="story-card-name">— ${escapeHTML(s.name)}</div>
+      </div>
+    `
+      )
+      .join("");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    populateCategorySelect();
+    renderFilters();
+    renderStories();
+
+    document.getElementById("story-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const category = document.getElementById("story-category").value;
+      const text = document.getElementById("story-text").value;
+      const name = document.getElementById("story-name").value;
+      if (!text.trim()) return;
+
+      submitStory({ name, category, text });
+
+      e.target.reset();
+      populateCategorySelect();
+      const confirm = document.getElementById("story-confirm");
+      confirm.style.display = "block";
+      setTimeout(() => (confirm.style.display = "none"), 4000);
+    });
+  });
+</script>
+</body>
+</html>

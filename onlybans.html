@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnlyBans — things we hate</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+<div class="cheetah-strip"></div>
+
+<header class="hero" style="padding-bottom: 24px;">
+  <div class="wrap">
+    <span class="hero-eyebrow">the banned list</span>
+    <h1>OnlyBans</h1>
+    <p class="hero-sub">Things, people, trends, and habits we have officially had enough of.</p>
+  </div>
+</header>
+
+<section style="padding-top: 0;">
+  <div class="wrap">
+    <div class="post-grid" id="bans-grid"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => renderPostGrid("bans", "bans-grid"));
+</script>
+</body>
+</html>
