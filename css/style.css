@@ -1,20 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,700&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;700;900&family=Lilita+One&display=swap');
 
 /* ============================================================
    TOKENS
    ============================================================ */
 :root {
-  --cream: #FFF6EC;
-  --pink: #FF3E8E;
-  --pink-soft: #FFD9E8;
-  --red: #D91E36;
-  --ink: #1B1512;
-  --gold: #C98A2B;
+  --cream: #FFF0F7;
+  --pink: #FF1493;
+  --pink-soft: #FFB8DE;
+  --red: #F21B3F;
+  --ink: #2A0714;
+  --gold: #FFC928;
   --white: #FFFFFF;
 
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Lilita One', sans-serif;
   --font-hand: 'Caveat', cursive;
-  --font-body: 'Space Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
 
   --radius: 18px;
   --shadow-card: 6px 6px 0 rgba(27, 21, 18, 0.9);
