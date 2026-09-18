@@ -1,18 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;700;900&family=Lilita+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,700;1,900&display=swap');
 
 /* ============================================================
    TOKENS
    ============================================================ */
 :root {
-  --cream: #FFF0F7;
-  --pink: #FF1493;
-  --pink-soft: #FFB8DE;
-  --red: #F21B3F;
-  --ink: #2A0714;
-  --gold: #FFC928;
+  --cream: #F4E7E1;
+  --pink: #E060A0;
+  --pink-soft: #E0C0C0;
+  --red: #402020;
+  --ink: #17141A;
+  --gold: #E0E0C0;
+  --blue: #80A0C0;
+  --lavender: #C0A0C0;
   --white: #FFFFFF;
 
-  --font-display: 'Lilita One', sans-serif;
+  --font-display: 'Bebas Neue', sans-serif;
   --font-hand: 'Caveat', cursive;
   --font-body: 'DM Sans', sans-serif;
 
@@ -26,9 +28,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 8% 16%, rgba(255, 20, 147, 0.14) 0 3px, transparent 4px) 0 0 / 22px 22px,
-    var(--cream);
+  background: var(--cream);
   color: var(--ink);
   font-family: var(--font-body);
   line-height: 1.55;
@@ -80,9 +80,9 @@ p { margin: 0 0 1em; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--pink);
+  background: var(--ink);
   border-bottom: 4px solid var(--ink);
-  box-shadow: 0 5px 0 var(--red);
+  box-shadow: 0 5px 0 var(--pink);
 }
 
 .header-inner {
@@ -104,7 +104,7 @@ p { margin: 0 0 1em; }
   color: var(--white);
   margin-right: auto;
 }
-.brand-star { color: var(--gold); display: inline-flex; }
+.brand-star { color: var(--pink); display: inline-flex; }
 
 .site-nav {
   display: flex;
@@ -196,8 +196,8 @@ p { margin: 0 0 1em; }
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(105deg, rgba(255, 20, 147, 0.92), rgba(242, 27, 63, 0.88)),
-    url("../assets/fearless-art.jpeg") center 42% / cover;
+    linear-gradient(105deg, rgba(128, 160, 192, 0.88), rgba(192, 160, 192, 0.86)),
+    url("../assets/reference-01.jpeg") center 42% / cover;
   color: var(--white);
   border-bottom: 6px solid var(--ink);
 }
@@ -232,7 +232,7 @@ p { margin: 0 0 1em; }
 .hero-eyebrow {
   font-family: var(--font-hand);
   font-size: 1.5rem;
-  color: var(--gold);
+  color: var(--cream);
   margin-bottom: 4px;
   display: inline-block;
   transform: rotate(-3deg);
@@ -240,7 +240,7 @@ p { margin: 0 0 1em; }
 .hero h1 {
   font-size: clamp(2.6rem, 6vw, 4.6rem);
   max-width: 14ch;
-  text-shadow: 4px 4px 0 var(--ink);
+  text-shadow: 4px 4px 0 var(--pink);
 }
 .hero-sub {
   font-size: 1.15rem;
@@ -248,7 +248,7 @@ p { margin: 0 0 1em; }
   margin-top: 14px;
 }
 .hero-actions { display: flex; gap: 14px; margin-top: 26px; flex-wrap: wrap; }
-.hero .btn-secondary { background: var(--gold); color: var(--ink); }
+.hero .btn-secondary { background: var(--cream); color: var(--ink); }
 
 @media (max-width: 700px) {
   .hero-layout { grid-template-columns: 1fr; gap: 32px; }
@@ -297,6 +297,40 @@ section { padding: 56px 0; }
 }
 .post-card:nth-child(even) { background: var(--pink-soft); }
 .post-card h3 { color: var(--red); }
+
+.inspo-gallery {
+  background: var(--ink);
+  color: var(--cream);
+  overflow: hidden;
+}
+.inspo-gallery .section-title { color: var(--cream); }
+.inspo-gallery .section-sub { color: var(--pink); }
+.inspo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(130px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+.inspo-grid figure {
+  margin: 0;
+  padding: 7px;
+  background: var(--cream);
+  border: 2px solid var(--pink);
+  transform: rotate(-2deg);
+}
+.inspo-grid figure:nth-child(even) {
+  transform: rotate(3deg) translateY(18px);
+  background: var(--pink-soft);
+}
+.inspo-grid img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  filter: saturate(0.9) contrast(1.05);
+}
+@media (max-width: 760px) {
+  .inspo-grid { grid-template-columns: repeat(3, 1fr); }
+}
 .post-card:nth-child(3n+1) { transform: rotate(-1deg); }
 .post-card:nth-child(3n+2) { transform: rotate(0.8deg); }
 .post-card:nth-child(3n+3) { transform: rotate(-0.5deg); }
