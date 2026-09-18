@@ -87,6 +87,7 @@ const PLACEHOLDER_MOVIES = [
       { name: "The Grand Budapest Hotel", stars: 5, note: "Rewatch. Still perfect. Still quoting it for a week." },
       { name: "Some new streaming thriller", stars: 2, note: "Twist was visible from space." },
       { name: "Cooking competition show, season 4", stars: 4, note: "Comfort viewing, no notes." },
+      { name: "Rosebush pruning", stars: 3, note: "Weird." },
     ],
     date: "2026-08-15",
   },
